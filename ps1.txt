@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char col_label[20];
+    int col_iteration_count = 0;
+    const char s[2] = ",";
+    char *token;
+    char user_input_id[50];
+
+    while(1) {
+        printf("\n\nEnter zero to exit the program");
+        printf("\nEnter Student ID to retrieve details : ");
+        scanf("%s", &user_input_id);
+
+        //Enter "0" to exit the program.
+        if (!strcmp(user_input_id, "0")){
+            break;
+        }
+
+        const char filename[] = "../student_details.txt";
+        FILE *file = fopen(filename, "r");
+        if (file != NULL) {
+            char line[128]; /* or other suitable maximum line size */
+            while (fgets(line, sizeof line, file) != NULL) /* read a line */
+            {
+                //set count to zero each row,
+                col_iteration_count = 0;
+
+                /*get first token (student_id)*/
+                token = strtok(line, s);
+
+                //if both strings are same,
+                if (!strcmp(token, user_input_id)) {
+                    /* walk through other tokens */
+                    while (token != NULL) {
+                        switch (col_iteration_count) {
+                            case 0:
+                                strcpy(col_label, "ID");
+                                break;
+                            case 1:
+                                strcpy(col_label, "Name");
+                                break;
+                            case 2:
+                                strcpy(col_label, "Gender");
+                                break;
+                            case 3:
+                                strcpy(col_label, "Age");
+                                break;
+                            case 4:
+                                strcpy(col_label, "Phone Number");
+                                break;
+                            default:
+                                printf("ERROR");
+                        }
+                        printf("\nStudent %s : %s", col_label, token);
+                        col_iteration_count++;
+                        token = strtok(NULL, s);
+                    }
+                }
+            }
+            fclose(file);
+        } else {
+            perror(filename); /* why didn't the file open? */
+        }
+    }
+    return 0;
+}
